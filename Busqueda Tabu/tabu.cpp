@@ -3,6 +3,10 @@
 #include "tabu.h"
 enum operacion { AGREGAR, ELIMINAR, INTERCAMBIAR };
 
+bool sonAdyacentes(const vector<int> i,int indiceI, const vector<int> j, int indiceJ){
+    return find(i.begin(),i.end(),indiceJ) != i.end() && find(j.begin(),j.end(),indiceI) != j.end();
+}
+
 bool puede_agregarse(const vector<int> &clique, int nodo) {
     return !(find(clique.begin(), clique.end(), nodo) != clique.end());
 }
@@ -11,7 +15,7 @@ bool sigueSiendoCliqueSiAgrego(const vector<vector<int> > &grafo,
                                 const vector<int> &clique,
                                 int nodo){
     for(int i = 0; i < clique.size(); ++i) {
-    if(!sonAdyacentes(grafo[clique[i]], grafo[nodo])) return false;
+    if(!sonAdyacentes(grafo[clique[i]],clique[i], grafo[nodo],nodo)) return false;
         }
     return true;
 }
@@ -22,7 +26,7 @@ bool intercambiandoSigueSiendoClique(const vector<vector<int> > &grafo,
                                      int nodoNuevo) {
     for (size_t i = 0; i < clique.size(); ++i) {
         if(i != (size_t) nodoViejo &&
-           !sonAdyacentes(grafo[clique[i]], grafo[nodoNuevo])) return false;
+           !sonAdyacentes(grafo[clique[i]],clique[i], grafo[nodoNuevo],nodoNuevo)) return false;
     }
     return true;
 }
@@ -32,7 +36,9 @@ size_t cantidad_tabu() {
     return cola.size();
 }
 
-nodos_tabu(size_t tam) : tam(tam) { }
+void nodos_tabu(size_t tam){
+    tam = tam;
+ }
 
 void marcar(int nodo) {
     conjunto.insert(nodo);
