@@ -11,18 +11,13 @@ int main() {
     unsigned m;
     heuristicaGolosa golosa;
     cin >> n;
-    //if(cin.eof()) break;
     cin >> m;
-    //if(cin.eof()) break;
-    //string s;
-    //getline(cin, s);
     golosa.init(n,m);
     for(unsigned i = 0; i < m; ++i) {
         unsigned v, w;
         cin >> v;
         cin >> w; 
         golosa.cargar_ejes(v,w);
-        //getline(cin, s);
     }
     golosa.clique_maxima();
     vector<vector<int> > graph;

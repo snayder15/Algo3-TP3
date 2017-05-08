@@ -10,7 +10,7 @@ SRCS = local_main.cpp
 
 #librerias personales
 
-LIBS= local.cpp
+LIBS= local.cpp ../Heuristica\ Golosa/heuristicaGolosa.cpp
 
 # define the C object files 
 OBJS = $(SRCS:.c=.o)

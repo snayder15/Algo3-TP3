@@ -2,6 +2,8 @@
 #define LOCAL_H
 #include <vector>
 #include <utility>
+#include <algorithm> 
+
 using namespace std;
 
 pair<int,vector<int>> local(const vector<vector<int> > &grafo, const pair<int, vector<int> > &clique);
