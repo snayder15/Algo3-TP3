@@ -3,6 +3,10 @@
 #include "tabu.h"
 enum operacion { AGREGAR, ELIMINAR, INTERCAMBIAR };
 
+set<int> conjunto;
+queue<int> cola;
+size_t tam;
+
 bool sonAdyacentes(const vector<int> i,int indiceI, const vector<int> j, int indiceJ){
     return find(i.begin(),i.end(),indiceJ) != i.end() && find(j.begin(),j.end(),indiceI) != j.end();
 }
@@ -59,6 +63,7 @@ pair<int,vector<int>> tabu(const vector<vector<int> > &grafo,
                 const pair<int,vector<int> > &clique,
                 unsigned movimientosTabu,
                 unsigned cantidadDeNodosTabu){
+    pair<int,vector<int>> solucion = clique; 
     pair<int,vector<int> > mejorSolucion = make_pair(0,vector<int>());
     tam = cantidadDeNodosTabu;
     bool faseTabu = false;
@@ -88,9 +93,9 @@ pair<int,vector<int>> tabu(const vector<vector<int> > &grafo,
                                (solucion.second.size() - 1);
             for (unsigned j = 0; j < grafo.size(); ++j) {
                 if(es_tabu(j)) continue;
-                if(puede_agregarse(solucion.second,j) &&
-                    intercambiandoSigueSiendoClique(grafo,clique,i,j)){
-                    int aporteJEsimo = nodos[j].size() -
+                if(puede_agregarse(solucion.second,j) && 
+                    intercambiandoSigueSiendoClique(grafo,solucion.second,i,j)){
+                    int aporteJEsimo = grafo[j].size() -
                                        (solucion.second.size() - 1);
                     int aporteNeto = aporteJEsimo - aporteIEsimo;
                     if(aporteNeto > aporte) {

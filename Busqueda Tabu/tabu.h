@@ -10,9 +10,6 @@
 
 using namespace std;
 
-set<int> conjunto;
-queue<int> cola;
-size_t tam;
 void nodos_tabu(size_t tam);
 void marcar(int nodo);
 bool es_tabu(int nodo);
