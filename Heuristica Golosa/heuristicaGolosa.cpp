@@ -90,3 +90,12 @@ void heuristicaGolosa::mostrar_solucion(){
 		cout << " " << clique.second[i] + 1 << "";
 	}
 }
+
+pair<int,vector<int> > heuristicaGolosa::clique_golosa(){
+	return clique;
+}
+
+vector<vector<int> > heuristicaGolosa::graph(){
+	return grafo;
+}
+

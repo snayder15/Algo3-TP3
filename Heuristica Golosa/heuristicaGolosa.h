@@ -17,6 +17,9 @@ class heuristicaGolosa{
 		bool pertenece_a_la_clique(int v);
 		bool son_adyacentes(int v1,int v2);
 		void mostrar_solucion();
+		pair<int,vector<int>> clique_golosa();
+		vector<vector<int> > graph();
+
 	private:
 		vector<vector<int> > grafo;
 		pair<int,vector<int> > clique;
