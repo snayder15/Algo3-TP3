@@ -7,13 +7,13 @@
 using namespace std;
 
 pair<int,vector<int>> local(const vector<vector<int> > &grafo, const pair<int, vector<int> > &clique);
-bool puede_agregarse(const vector<int> &clique, int nodo);
+bool puede_agregarse(const vector<int> &clique, int vertice);
 bool sonAdyacentes(const vector<int> i,int indiceI, const vector<int> j, int indiceJ);
 bool sigueSiendoCliqueSiAgrego(const vector<vector<int> > &grafo,
                                 const vector<int> &clique,
-                                int nodo);
+                                int vertice);
 bool intercambiandoSigueSiendoClique(const vector<vector<int> > &grafo,
                                      const vector<int> &clique,
-                                     int nodoViejo,
-                                     int nodoNuevo);
+                                     int verticeViejo,
+                                     int verticeNuevo);
 #endif 

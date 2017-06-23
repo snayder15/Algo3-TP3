@@ -5,8 +5,8 @@ using namespace std;
 enum operacion { AGREGAR, ELIMINAR, INTERCAMBIAR };
 
 
-bool puede_agregarse(const vector<int> &clique, int nodo) {
-    return !(find(clique.begin(), clique.end(), nodo) != clique.end());
+bool puede_agregarse(const vector<int> &clique, int vertice) {
+    return !(find(clique.begin(), clique.end(), vertice) != clique.end());
 }
 
 bool sonAdyacentes(const vector<int> i,int indiceI, const vector<int> j, int indiceJ){
@@ -15,20 +15,20 @@ bool sonAdyacentes(const vector<int> i,int indiceI, const vector<int> j, int ind
 
 bool sigueSiendoCliqueSiAgrego(const vector<vector<int> > &grafo,
                                 const vector<int> &clique,
-                                int nodo){
+                                int vertice){
     for(int i = 0; i < clique.size(); ++i) {
-    if(!sonAdyacentes(grafo[clique[i]],clique[i], grafo[nodo],nodo)) return false;
+    if(!sonAdyacentes(grafo[clique[i]],clique[i], grafo[vertice],vertice)) return false;
         }
     return true;
 }
 
 bool intercambiandoSigueSiendoClique(const vector<vector<int> > &grafo,
                                      const vector<int> &clique,
-                                     int nodoViejo,
-                                     int nodoNuevo) {
+                                     int verticeViejo,
+                                     int verticeNuevo) {
     for (size_t i = 0; i < clique.size(); ++i) {
-        if(i != (size_t) nodoViejo &&
-           !sonAdyacentes(grafo[clique[i]],clique[i], grafo[nodoNuevo],nodoNuevo)) return false;
+        if(i != (size_t) verticeViejo &&
+           !sonAdyacentes(grafo[clique[i]],clique[i], grafo[verticeNuevo],verticeNuevo)) return false;
     }
     return true;
 }
@@ -36,105 +36,68 @@ bool intercambiandoSigueSiendoClique(const vector<vector<int> > &grafo,
 pair<int,vector<int>> local(const vector<vector<int> > &grafo, const pair<int, vector<int> > &clique){
     pair<int,vector<int>> solucion = clique;
     while(true) {
-       // Operación hallada (y parámetros) que más aumenta la frontera.
-        operacion op;
-        int nodoAAgregar;
-        int nodoAEliminar;
-        pair<int, int> nodosAIntercambiar;
-        // Cantidad de aristas que aporta la operación.
-        int aporte = 0; 
-        // Operación AGREGAR.
+        operacion operacion;
+        int verticeAAgregar;
+        int verticeAEliminar;
+        pair<int, int> verticesAIntercambiar;
+        int cantAporte = 0; 
+        // agregar
         for(unsigned i = 0; i < grafo.size(); ++i) {
-           // ¿Puedo agregar el nodo i-ésimo a la clique?
             if(puede_agregarse(solucion.second,i) && 
                 sigueSiendoCliqueSiAgrego(grafo,solucion.second, i)){
-                // Calculo cuántas aristas me aporta a la frontera.
                 int aporteAgregar = grafo[i].size() -
                                    2 * solucion.second.size();
-
-                // Decido si me quedo con la operación.
-                if(aporteAgregar > aporte) {
-                    op = AGREGAR;
-                    nodoAAgregar = i;
-                    aporte = aporteAgregar;
+                if(aporteAgregar > cantAporte) {
+                    operacion = AGREGAR;
+                    verticeAAgregar = i;
+                    cantAporte = aporteAgregar;
                 }
             }
         }
-        // Operación INTERCAMBIAR.
+        // intercambiar
         for(unsigned i = 0; i < solucion.second.size(); ++i) {
-
-            // Calculo cuántas aristas aporta el i-ésimo nodo de la clique.
             int iEsimo = solucion.second[i];
             int aporteIEsimo = grafo[iEsimo].size() - ( solucion.second.size() - 1);
-            //int aporteIEsimo = nodos[iEsimo].adyacentes.size() -
-            //                   (indices_nodos(solucion).size() - 1);
-
-            // Consideramos el resto de los nodos del grafo.
             for (unsigned j = 0; j < grafo.size(); ++j) {
-
-                // ¿Si lo intercambio por el i-ésimo, sigue siendo clique?
                 if(puede_agregarse(solucion.second,j) &&
                     intercambiandoSigueSiendoClique(grafo,solucion.second,i,j)){ 
-                //if(!estaEnLaClique(indices_nodos(solucion), j) &&
-                //   intercambiandoSigueSiendoClique(
-                //           nodos, indices_nodos(solucion), i, j)) {
-
-                    // Calculo cuántas aristas aportaría el j-ésimo nodo
-                    // del grafo.
                     int aporteJEsimo = grafo[j].size() -
                                        (solucion.second.size() - 1);
-
-                    // Calculo el aporte neto de intercambiar ambos nodos.
                     int aporteNeto = aporteJEsimo - aporteIEsimo;
-
-                    // Decido si me quedo con ésta operación.
-                    if(aporteNeto > aporte) {
-                        aporte = aporteNeto;
-                        op = INTERCAMBIAR;
-                        nodosAIntercambiar = make_pair(i, j);
+                    if(aporteNeto > cantAporte) {
+                        cantAporte = aporteNeto;
+                        operacion = INTERCAMBIAR;
+                        verticesAIntercambiar = make_pair(i, j);
                     }
                 }
             }
         }
-
-        // Operación ELIMINAR
+        // eliminar
         for(unsigned i = 0; i < solucion.second.size(); ++i) {
-
-            // Calculo cuántas aristas agrega a la frontera el eliminar el
-            // i-ésimo nodo de la clique.
             int iEsimo = solucion.second[i];
             int aporteEliminar = 2 * (solucion.second.size() - 1) -
                                  grafo[iEsimo].size();
-
-            if(aporteEliminar > aporte) {
-                op = ELIMINAR;
-                nodoAEliminar = i;
-                aporte = aporteEliminar;
+            if(aporteEliminar > cantAporte) {
+                operacion = ELIMINAR;
+                verticeAEliminar = i;
+                cantAporte = aporteEliminar;
             }
         }
-
-        // Si alcanzamos un máximo local, terminamos.
-        if(aporte == 0) break;
-
-        // En caso contrario, realizo la operación que más aristas contribuye.
-        switch(op) {
+        if(cantAporte == 0) break;
+        switch(operacion) {
             case AGREGAR:
-            solucion.second.push_back(nodoAAgregar);
+            solucion.second.push_back(verticeAAgregar);
             break;
-
             case ELIMINAR:
             solucion.second.erase(
-                    solucion.second.begin() + nodoAEliminar);
+                    solucion.second.begin() + verticeAEliminar);
             break;
-
             case INTERCAMBIAR:
-            solucion.second[nodosAIntercambiar.first] =
-                    nodosAIntercambiar.second;
+            solucion.second[verticesAIntercambiar.first] =
+                    verticesAIntercambiar.second;
         }
-
-        solucion.first += aporte;
+        solucion.first += cantAporte;
     }
-
     return solucion;
 
 }
