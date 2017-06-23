@@ -19,6 +19,7 @@ class clique{
 	unsigned int frontera();
 	void mostrar();
 	unsigned int maximo_afuera();
+	unsigned int cantidad_candidatos();
 
 	private:
 	set<int> nodos;

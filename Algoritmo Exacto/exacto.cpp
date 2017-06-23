@@ -73,6 +73,8 @@ clique exacto::aux(unsigned int i,clique c,unsigned int anadidos){
 		return c;
 	if(anadidos>(grafo_original.vertices()/2))
 		return c;
+	if(c.cantidad_candidatos()==0)
+		return c;
 	clique agregando=c;
 	clique res_agregado=c;
 	if(agregando.puede_agregarse(i)){

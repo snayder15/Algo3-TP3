@@ -10,6 +10,10 @@ bool clique::puede_agregarse(unsigned int nodo){
 	return find (vecindad.begin(), vecindad.end(),nodo) != vecindad.end();
 }
 
+unsigned int clique::cantidad_candidatos(){
+	return vecindad.size();
+}
+
 void clique::agregar_nodo(unsigned int nodo,vector<int> vecinos){
 	if(nodos.empty()){
 		for(vector<int>::iterator it=vecinos.begin();it!=vecinos.end();it++){
