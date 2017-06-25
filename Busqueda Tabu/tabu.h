@@ -10,13 +10,13 @@
 
 using namespace std;
 
-void nodos_tabu(size_t tam);
-void marcar(int nodo);
-bool es_tabu(int nodo);
-size_t cantidad_tabu();
+void verticesTabu(size_t tam);
+void marcar(int vertice);
+bool esTabu(int vertice);
+size_t cantTabu();
 pair<int,vector<int>> tabu(const vector<vector<int> > &grafo, 
 				const pair<int,vector<int> > &clique,
 				unsigned movimientosTabu,
-		 		unsigned cantidadDeNodosTabu);
+		 		unsigned cantidadDeverticesTabu);
 
 #endif // TABU_H

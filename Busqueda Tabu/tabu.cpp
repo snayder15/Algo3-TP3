@@ -11,42 +11,42 @@ bool sonAdyacentes(const vector<int> i,int indiceI, const vector<int> j, int ind
     return find(i.begin(),i.end(),indiceJ) != i.end() && find(j.begin(),j.end(),indiceI) != j.end();
 }
 
-bool puede_agregarse(const vector<int> &clique, int nodo) {
-    return !(find(clique.begin(), clique.end(), nodo) != clique.end());
+bool puede_agregarse(const vector<int> &clique, int vertice) {
+    return !(find(clique.begin(), clique.end(), vertice) != clique.end());
 }
 
 bool sigueSiendoCliqueSiAgrego(const vector<vector<int> > &grafo,
                                 const vector<int> &clique,
-                                int nodo){
+                                int vertice){
     for(int i = 0; i < clique.size(); ++i) {
-    if(!sonAdyacentes(grafo[clique[i]],clique[i], grafo[nodo],nodo)) return false;
+    if(!sonAdyacentes(grafo[clique[i]],clique[i], grafo[vertice],vertice)) return false;
         }
     return true;
 }
 
 bool intercambiandoSigueSiendoClique(const vector<vector<int> > &grafo,
                                      const vector<int> &clique,
-                                     int nodoViejo,
-                                     int nodoNuevo) {
+                                     int verticeViejo,
+                                     int verticeNuevo) {
     for (size_t i = 0; i < clique.size(); ++i) {
-        if(i != (size_t) nodoViejo &&
-           !sonAdyacentes(grafo[clique[i]],clique[i], grafo[nodoNuevo],nodoNuevo)) return false;
+        if(i != (size_t) verticeViejo &&
+           !sonAdyacentes(grafo[clique[i]],clique[i], grafo[verticeNuevo],verticeNuevo)) return false;
     }
     return true;
 }
 
 
-size_t cantidad_tabu() {
+size_t cantTabu() {
     return cola.size();
 }
 
-void nodos_tabu(size_t tam){
+void verticesTabu(size_t tam){
     tam = tam;
  }
 
-void marcar(int nodo) {
-    conjunto.insert(nodo);
-    cola.push(nodo);
+void marcar(int vertice) {
+    conjunto.insert(vertice);
+    cola.push(vertice);
 
     // Si me excedo del tamaño máximo, quito el elemento más viejo.
     if(cola.size() > tam) {
@@ -55,44 +55,44 @@ void marcar(int nodo) {
     }
 }
 
-bool es_tabu(int nodo) {
-    return conjunto.find(nodo) != conjunto.end();
+bool esTabu(int vertice) {
+    return conjunto.find(vertice) != conjunto.end();
 }
 
 pair<int,vector<int>> tabu(const vector<vector<int> > &grafo, 
                 const pair<int,vector<int> > &clique,
                 unsigned movimientosTabu,
-                unsigned cantidadDeNodosTabu){
+                unsigned cantidadDeverticesTabu){
     pair<int,vector<int>> solucion = clique; 
     pair<int,vector<int> > mejorSolucion = make_pair(0,vector<int>());
-    tam = cantidadDeNodosTabu;
+    tam = cantidadDeverticesTabu;
     bool faseTabu = false;
     unsigned movimientosTabuRestantes = movimientosTabu;
     while(true) {
         operacion op = ELIMINAR;
-        int nodoAAgregar;
-        int nodoAEliminar;
-        pair<int, int> nodosAIntercambiar;
+        int verticeAAgregar;
+        int verticeAEliminar;
+        pair<int, int> verticesAIntercambiar;
         int aporte = numeric_limits<int>::min();
         for(unsigned i = 0; i < grafo.size(); ++i) {
-            if(es_tabu(i)) continue;
+            if(esTabu(i)) continue;
             if(puede_agregarse(clique.second,i) &&
                 sigueSiendoCliqueSiAgrego(grafo,solucion.second,i)){  
                 int aporteAgregar = grafo[i].size() - 2*solucion.second.size();
                 if(aporteAgregar > aporte) {
                     op = AGREGAR;
-                    nodoAAgregar = i;
+                    verticeAAgregar = i;
                     aporte = aporteAgregar;
                 }
             }
         }
         for(unsigned i = 0; i < solucion.second.size();++i){
-            if(es_tabu(i)) continue;
+            if(esTabu(i)) continue;
             int iEsimo = solucion.second[i];
             int aporteIEsimo = grafo[iEsimo].size() -
                                (solucion.second.size() - 1);
             for (unsigned j = 0; j < grafo.size(); ++j) {
-                if(es_tabu(j)) continue;
+                if(esTabu(j)) continue;
                 if(puede_agregarse(solucion.second,j) && 
                     intercambiandoSigueSiendoClique(grafo,solucion.second,i,j)){
                     int aporteJEsimo = grafo[j].size() -
@@ -101,19 +101,19 @@ pair<int,vector<int>> tabu(const vector<vector<int> > &grafo,
                     if(aporteNeto > aporte) {
                         aporte = aporteNeto;
                         op = INTERCAMBIAR;
-                        nodosAIntercambiar = make_pair(i, j);
+                        verticesAIntercambiar = make_pair(i, j);
                     }
                 }
             }
         }
         for(unsigned i = 0; i < solucion.second.size(); ++i) {
-            if(es_tabu(solucion.second[i])) continue;
+            if(esTabu(solucion.second[i])) continue;
             int iEsimo = solucion.second[i];
             int aporteEliminar = 2 * (solucion.second.size() - 1) -
                                  grafo[iEsimo].size();
             if(aporteEliminar > aporte) {
                 op = ELIMINAR;
-                nodoAEliminar = i;
+                verticeAEliminar = i;
                 aporte = aporteEliminar;
             }
         }
@@ -122,16 +122,16 @@ pair<int,vector<int>> tabu(const vector<vector<int> > &grafo,
                 mejorSolucion = solucion;
                 faseTabu = true;
             }
-            if(cantidad_tabu() == grafo.size()) return mejorSolucion;
+            if(cantTabu() == grafo.size()) return mejorSolucion;
             bool solucionTabu = true;
             for (unsigned i = 0; i < solucion.second.size(); ++i) {
-                if(!es_tabu(solucion.second[i])) solucionTabu = false;
+                if(!esTabu(solucion.second[i])) solucionTabu = false;
             }
             if(op == ELIMINAR && solucionTabu) return mejorSolucion;
             switch(op) {
-                case AGREGAR:      marcar(nodoAAgregar); break;
-                case ELIMINAR:     marcar(nodoAEliminar); break;
-                case INTERCAMBIAR: marcar(nodosAIntercambiar.first);
+                case AGREGAR:      marcar(verticeAAgregar); break;
+                case ELIMINAR:     marcar(verticeAEliminar); break;
+                case INTERCAMBIAR: marcar(verticesAIntercambiar.first);
             }
             movimientosTabuRestantes--;
             if(movimientosTabuRestantes == 0) return mejorSolucion;
@@ -142,17 +142,17 @@ pair<int,vector<int>> tabu(const vector<vector<int> > &grafo,
         }
         switch(op) {
             case AGREGAR:
-            solucion.second.push_back(nodoAAgregar);
+            solucion.second.push_back(verticeAAgregar);
             break;
 
             case ELIMINAR:
             solucion.second.erase(
-                    solucion.second.begin() + nodoAEliminar);
+                    solucion.second.begin() + verticeAEliminar);
             break;
 
             case INTERCAMBIAR:
-            solucion.second[nodosAIntercambiar.first] =
-                    nodosAIntercambiar.second;
+            solucion.second[verticesAIntercambiar.first] =
+                    verticesAIntercambiar.second;
         }
 
         solucion.first += aporte;
