@@ -26,7 +26,7 @@ int main(int argc,char * argv[]){
 	auto start = ya();
 	int resultado=instancia.buscar_CMF(g);
 	auto end = ya();
-	vector<int> solucion=instancia.CMF();
+	vector<int> solucion=instancia.nodos_CMF();
 	if(argc>1){
 		cerr<<"escribiendo tiempos"<<endl;
 		cout<<cant_nodos<<";"<<cant_aristas<<";"<<resultado<<";"<<solucion.size()<<";";

@@ -4,6 +4,12 @@ clique::clique(){
 	tamfrontera=0;
 }
 
+clique::clique(const clique &c){
+	tamfrontera=c.tamfrontera;
+	nodos=c.nodos;
+	vecindad=c.vecindad;
+}
+
 bool clique::puede_agregarse(unsigned int nodo){
 	if(nodos.empty())
 		return true;
@@ -19,6 +25,7 @@ void clique::agregar_nodo(unsigned int nodo,vector<int> vecinos){
 		for(vector<int>::iterator it=vecinos.begin();it!=vecinos.end();it++){
 			vecindad.insert(*it);
 		}
+		tamfrontera=vecinos.size();
 	}
 	else{
 		set<int> interseccion;
@@ -27,13 +34,16 @@ void clique::agregar_nodo(unsigned int nodo,vector<int> vecinos){
 				interseccion.insert(*it);
 		}
 		vecindad=interseccion;
-		tamfrontera=tamfrontera+vecinos.size()-nodos.size();
+		tamfrontera=tamfrontera+vecinos.size()-2*nodos.size();
 	}
 	nodos.insert(nodo);
 }
 
 unsigned int clique::size(){
 	return nodos.size();
+}
+bool clique::empty(){
+	return nodos.empty();
 }
 
 vector<int> clique::vertices(){

@@ -14,7 +14,7 @@ archivo_salida3 = "tiempo1.dat"
 temp_file="temp"
 
 intancias=1
-max_nodos=25
+max_nodos=20
 parametro_2=6
 
 def generar_grafos(nodos, densidad_normal, max_clique=15, max_frontera=15,numero=None):
@@ -27,6 +27,8 @@ def generar_grafos(nodos, densidad_normal, max_clique=15, max_frontera=15,numero
 	res=[]
 	if(numero!=None):
 		nombre=temp_file+str(numero)
+	else:
+		nombre=temp_file
 	with open(nombre,'w') as f:
 		f.write(str(n)+" "+str(m)+"\n") #escribo las ciudades y rutas
 		#escribo las aristas
@@ -53,12 +55,15 @@ if __name__ == '__main__':
 				#terminar archivo_casos
 				if(len(argv)>=4):
 					archivo_salida=argv[3]
+				if not os.path.exists(archivo_salida):
+					with open(archivo_salida, 'w') as f:
+						f.write("nodos;aristas;frontera;tamano clique;tiempo;\n")
+						f.close()
 				with open(archivo_salida, 'a') as f:
 					for line in in_file:
 						path, file_name = os.path.split(argv[2])
 						test_name=line.split(" ")[0]
 						test=path+"/"+test_name
-						sol=line.split(" ",1)[1]
 						print "Test "+test_name 
 						call(ejecutable+str(" a < ")+test,stdout=f,shell=True)	
 				f.close()
@@ -78,14 +83,16 @@ if __name__ == '__main__':
 				f.write("nodos;aristas;resultado;tiempo;\n")
 				f.close()
 		with open(archivo_salida, 'a') as f:
-			for nodos in range(5,max_nodos):
+			for nodos in range(1,max_nodos):
 				for k in range(5,parametro_2,5):
 					for i in range(intancias): #cantidad de instancias distintas para cada configuracion
 						densidad=random.random()
 						densidad=1
-						generar_grafos(nodos,densidad,numero=prueba_nro)
+						#generar_grafos(nodos,densidad,numero=prueba_nro)
+						generar_grafos(nodos,densidad)
 						print "prueba:"+str(prueba_nro)
-				 		call(ejecutable+str(" a < ")+temp_file+str(prueba_nro),stdout=f,shell=True)	
+				 		#call(ejecutable+str(" a < ")+temp_file+str(prueba_nro),stdout=f,shell=True)	
+				 		call(ejecutable+str(" a < ")+temp_file,stdout=f,shell=True)	
 				 		prueba_nro=prueba_nro+1
 		 	f.close()
 	else:
